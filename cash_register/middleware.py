@@ -75,11 +75,18 @@ class ProxyCashRegister(object):
     def __call__(self, instance):
         assert isinstance(instance, self._CashRegister)
         cmd_metrics = self._CashRegister.get_commands_metric()
+        last_command = ''
         for item in self.__commands:
             cmd, args, kwargs = item
             if cmd.__name__ in cmd_metrics:
                 timeout, fixed = cmd_metrics[cmd.__name__]
                 kwargs['timeout'] = abs(timeout)
+
+                if (last_command in cmd_metrics) \
+                        and (last_command != cmd.__name__):
+                    last_timeout, _ = cmd_metrics[last_command]
+                    if last_timeout > timeout:
+                        kwargs['timeout'] += abs(last_timeout)
             yield cmd(instance, *args, **kwargs)
         yield
 
