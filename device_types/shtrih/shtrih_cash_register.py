@@ -15,12 +15,13 @@ class ShtrihCashRegister(object):
     """ Класс предоставляет общий интерфейс для выполнения команд на ККТ """
 
     dev_type = "Shtrih"
+    dev_class = Shtrih
 
     def __init__(self, port=None, rate=None):
         try:
-            self.__device = Shtrih(port, rate)
+            self.__device = self.dev_class(port, rate)
         except ShtrihConnectionError:
-            self.__device = Shtrih(None, None)
+            self.__device = self.dev_class(None, None)
 
         self._prepare = ShtrihPrepareRequest()
         self._response = ShtrihPrepareResponse()

@@ -9,6 +9,7 @@ from collections import OrderedDict
 
 import time
 
+from lc_cashcontrol.device_types.shtrih.shtrih_constants import WAITING_COMMANDS
 from middleware import Log, SmartMixin
 from utils import format_string, prepare_barcode
 
@@ -193,7 +194,7 @@ class CashRegister(Log, SmartMixin):
                 timeout = self.delta_step
                 need_to_calibrate = False
             cmd_timeout_changed = True
-        elif delta > 0:
+        elif (delta > 0) and (name not in WAITING_COMMANDS):
             timeout += delta
             need_to_calibrate = False
             cmd_timeout_changed = True

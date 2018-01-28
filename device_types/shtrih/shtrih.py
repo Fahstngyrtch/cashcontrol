@@ -14,7 +14,8 @@ from .shtrih_constants import PASSWORD, ENQ, ACK, NAK, STX, ST_NO_SIGNAL, \
     ST_READY, COMMANDS, TIME_DELTA_STEP, MAX_TRIES, DEF_TIMEOUT, RATES, \
     ST_READ, ST_RETRY, TIME_DELTA_ERRORS, CRITICAL_COMMANDS, \
     POST_CRITICAL_COMMANDS, PRN_NON_CRITICAL, PRN_CRITICAL, PRN_POST_CRITICAL, \
-    ERR_OPENING_PORT, ERR_LOST_DEVICE, ERR_UNKNOWN_COMMAND, NO_NEED_PASSWORD
+    ERR_OPENING_PORT, ERR_LOST_DEVICE, ERR_UNKNOWN_COMMAND, NO_NEED_PASSWORD, \
+    FINAL_TIME
 from .shtrih_exceptions import ShtrihConnectionError, ShtrihCommandError, \
     ShtrihError
 
@@ -328,6 +329,9 @@ class Shtrih(object):
 
             if t_max == MAX_TRIES:
                 self.__result['delta'] -= TIME_DELTA_STEP
+
+            if command in FINAL_TIME:
+                time.sleep(FINAL_TIME[command])
 
     @property
     def result(self):

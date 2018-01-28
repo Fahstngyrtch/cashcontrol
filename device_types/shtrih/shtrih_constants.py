@@ -120,6 +120,7 @@ COMMANDS = {
 }
 
 NO_NEED_PASSWORD = [0xfc]
+FINAL_TIME = {"feed_document": 0.2, "cut_check": 0.3}
 
 # ###################################
 # Обработка ошибок выполнения команд
@@ -127,6 +128,7 @@ NO_NEED_PASSWORD = [0xfc]
 
 CRITICAL_COMMANDS = ["sale", "return_sale"]
 POST_CRITICAL_COMMANDS = ["close_check", ]
+WAITING_COMMANDS = ['feed_document', 'cut_check']
 ROLLBACKS = {"sale": "cancel_check", "return_sale": "cancel_check"}
 PRN_NON_CRITICAL = 0    # печать документа вне критической области
 PRN_CRITICAL = 1        # печать документа в критической области
