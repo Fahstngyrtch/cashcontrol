@@ -142,7 +142,7 @@ class ShtrihCashRegister(object):
             try:
                 self.__device(command, data, timeout)
             except ShtrihError as exc:
-                response = self.analyse_result(command, exc)
+                response = self.analyse_result(command, exc.serialize())
                 break
             else:
                 response = self.analyse_result(command)
@@ -158,7 +158,7 @@ class ShtrihCashRegister(object):
                     break
         else:
             exp = ShtrihCommandError(ERR_COMMAND_TIMEOUT)
-            response = self.analyse_result(command, exp)
+            response = self.analyse_result(command, exp.serialize())
 
         return response
 

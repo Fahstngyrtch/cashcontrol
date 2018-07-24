@@ -10,7 +10,7 @@ from collections import OrderedDict
 import time
 
 from lc_cashcontrol.device_types.shtrih.shtrih_constants import WAITING_COMMANDS
-from middleware import Log, SmartMixin
+from middleware import LogMixin, SmartMixin
 from utils import format_string, prepare_barcode
 
 
@@ -48,20 +48,25 @@ def command(method):
     @functools.wraps(method)
     def wrap(self, *args, **kwargs):
         def gen_wrap():
+            name = method.__name__
             response = {}
             for _ in range(tries_to_exec):
-                name = method.__name__
                 self.log_info('Make {}'.format(name))
                 self.log_debug("Args: {}".format(args))
                 self.log_debug("Kwargs: {}".format(kwargs))
 
-                response = method(self, *args, **kwargs)
+                try:
+                    response = method(self, *args, **kwargs)
+                except Exception as err:
+                    self.log_critical("Unhandled exception while making {}".format(name), err)
                 self.log_debug("Response: {}".format(response))
 
                 if response['exception']:
                     exception = response['exception']
-                    self.log_error("{0}: {1}".format(
-                        exception.code, exception.description))
+                    desc = exception['description']
+                    if isinstance(desc, str):
+                        desc = unicode(desc, "utf-8")
+                    self.log_error(u"{0}: {1}".format(exception['code'], desc))
 
                 call_again = False
                 action = response['action']
@@ -95,18 +100,22 @@ def command(method):
                 if not call_again:
                     break
             else:
-                messages = (
-                    "'{}': Не удалось выолнить команду",
-                    "Нет связи с устройством"
-                )
-                self.log_error(messages)
-                response['exception'] = messages
+                error = {
+                    'error': 'CashRegisterError',
+                    'message': u"'{}': Не удалось выолнить команду".format(name),
+                    'args': (),
+                    'code': -1,
+                    'description': u"Нет связи с устройством",
+                    'action': name
+                }
+                self.log_error(error)
+                response['exception'] = error
             yield response
         return gen_wrap()
     return wrap
 
 
-class CashRegister(Log, SmartMixin):
+class CashRegister(LogMixin, SmartMixin):
     """ Класс реализует общий набор команд к ККТ """
 
     def __init__(self, device):
@@ -165,7 +174,8 @@ class CashRegister(Log, SmartMixin):
             assert "delta" in result
             assert "delta_for_last_command" in result
         except AssertionError:
-            return
+            self.log_error("Wrong structure for SMART fixing", "".join(result.keys()))
+            return False
 
         name = result['command']
         timeout, need_to_calibrate = 0, False
@@ -207,6 +217,7 @@ class CashRegister(Log, SmartMixin):
             metric['commands'] = metric_commands
             self.smart = metric
         self.last_command = name
+        return True
 
     def make_cancel_check(self):
         """ Аннулирование незакрытого чека

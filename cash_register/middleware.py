@@ -57,7 +57,7 @@ class TemplateReader(object):
 
 
 class ProxyCashRegister(object):
-    """ Прокси класс для формирования списка команд
+    """ Прокси-класс для формирования списка команд
         во время выполнения шаблона
     """
     def __init__(self, CashRegisterClass):
@@ -74,8 +74,10 @@ class ProxyCashRegister(object):
 
     def __call__(self, instance):
         assert isinstance(instance, self._CashRegister)
+
         cmd_metrics = self._CashRegister.get_commands_metric()
         last_command = ''
+
         for item in self.__commands:
             cmd, args, kwargs = item
             if cmd.__name__ in cmd_metrics:
@@ -312,30 +314,26 @@ class SmartMixin(object):
         return metric.get('commands') or {}
 
 
-class Log(object):
+class LogMixin(object):
     """ Интерфейс логирования """
-    def __init__(self):
-        self.__log = None
+    logger = logging.getLogger("LoremCross.cash_control")
 
-    def register_log(self, log):
-        self.__log = log
+    @classmethod
+    def log_debug(cls, msg, *args, **kwargs):
+        cls.logger.debug(msg, args, kwargs)
 
-    def log_debug(self, msg, *args, **kwargs):
-        if self.__log:
-            self.__log.debug(msg, args, kwargs)
+    @classmethod
+    def log_info(cls, msg, *args, **kwargs):
+        cls.logger.info(msg, args, kwargs)
 
-    def log_info(self, msg, *args, **kwargs):
-        if self.__log:
-            self.__log.info(msg, args, kwargs)
+    @classmethod
+    def log_warning(cls, msg, *args, **kwargs):
+        cls.logger.warning(msg, args, kwargs)
 
-    def log_warning(self, msg, *args, **kwargs):
-        if self.__log:
-            self.__log.warning(msg, args, kwargs)
+    @classmethod
+    def log_error(cls, msg, *args, **kwargs):
+        cls.logger.error(msg, args, kwargs)
 
-    def log_error(self, msg, *args, **kwargs):
-        if self.__log:
-            self.__log.error(msg, args, kwargs)
-
-    def log_critical(self, msg, *args, **kwargs):
-        if self.__log:
-            self.__log.critical(msg, args, kwargs)
+    @classmethod
+    def log_critical(cls, msg, *args, **kwargs):
+        cls.logger.critical(msg, args, kwargs)

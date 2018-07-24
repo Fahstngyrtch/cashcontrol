@@ -5,6 +5,7 @@
 """
 from rr import RR
 from shtrih_cash_register import ShtrihCashRegister
+from rr_middleware import RRPrepareRequest, RRPrepareResponse
 
 
 class RRCashRegister(ShtrihCashRegister):
@@ -14,3 +15,8 @@ class RRCashRegister(ShtrihCashRegister):
 
     dev_type = "RR"
     dev_class = RR
+
+    def __init__(self, port=None, rate=None):
+        super(RRCashRegister, self).__init__(port, rate)
+        self._prepare = RRPrepareRequest()
+        self._response = RRPrepareResponse()

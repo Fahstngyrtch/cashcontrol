@@ -3,12 +3,12 @@ from os.path import join, dirname
 
 setup(
     name='cashcontrol',
-    version='1.1.1',
+    version='1.1.5',
     packages=find_packages(),
     install_requires=[
-        "configparser==3.5.0",
-        "pyserial==3.4",
-        "jinja2==2.9.6"],
+        "configparser",
+        "pyserial",
+        "jinja2"],
     url='',
     license='LGPL',
     author='jn',
