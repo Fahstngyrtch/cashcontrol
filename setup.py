@@ -3,7 +3,7 @@ from os.path import join, dirname
 
 setup(
     name='cashcontrol',
-    version='1.1.5',
+    version='1.1.6',
     packages=find_packages(),
     install_requires=[
         "configparser",

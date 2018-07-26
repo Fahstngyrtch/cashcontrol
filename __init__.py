@@ -6,7 +6,7 @@ from cash_register.utils import execute_printing_script
 from cash_register.cash_register import CashRegister
 from cash_register.middleware import ProxyCashRegister
 
-__version__ = "1.1.5"
+__version__ = "1.1.6"
 
 TYPE_SHTRIH = 'shtrih'
 TYPE_RR = 'rr'

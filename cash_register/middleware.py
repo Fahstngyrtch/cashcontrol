@@ -106,10 +106,6 @@ class ProxyCashRegister(object):
             [self._CashRegister.beep, (), {'timeout': timeout}])
 
     def cancel_check(self, timeout=None):
-        self.__commands.append(
-            [self._CashRegister.beep, (), {'timeout': timeout}])
-
-    def cancel_check(self, timeout=None):
         self.__commands.append([
             self._CashRegister.cancel_check, (), {'timeout': timeout}])
 
@@ -316,24 +312,64 @@ class SmartMixin(object):
 
 class LogMixin(object):
     """ Интерфейс логирования """
-    logger = logging.getLogger("LoremCross.cash_control")
 
-    @classmethod
-    def log_debug(cls, msg, *args, **kwargs):
-        cls.logger.debug(msg, args, kwargs)
+    @staticmethod
+    def log_debug(msg, *args, **kwargs):
+        logger = logging.getLogger("LoremCross.cash_control")
 
-    @classmethod
-    def log_info(cls, msg, *args, **kwargs):
-        cls.logger.info(msg, args, kwargs)
+        logger.debug(msg)
 
-    @classmethod
-    def log_warning(cls, msg, *args, **kwargs):
-        cls.logger.warning(msg, args, kwargs)
+        if args:
+            logger.debug("args: {}".format(args))
 
-    @classmethod
-    def log_error(cls, msg, *args, **kwargs):
-        cls.logger.error(msg, args, kwargs)
+        if kwargs:
+            logger.debug("kwargs: {}".format(kwargs))
 
-    @classmethod
-    def log_critical(cls, msg, *args, **kwargs):
-        cls.logger.critical(msg, args, kwargs)
+    @staticmethod
+    def log_info(msg, *args, **kwargs):
+        logger = logging.getLogger("LoremCross.cash_control")
+
+        logger.info(msg)
+
+        if args:
+            logger.info("args: {}".format(args))
+
+        if kwargs:
+            logger.info("kwargs: {}".format(kwargs))
+
+    @staticmethod
+    def log_warning(msg, *args, **kwargs):
+        logger = logging.getLogger("LoremCross.cash_control")
+
+        logger.warn(msg)
+
+        if args:
+            logger.warn("args: {}".format(args))
+
+
+        if kwargs:
+            logger.warn("kwargs: {}".format(kwargs))
+
+    @staticmethod
+    def log_error(msg, *args, **kwargs):
+        logger = logging.getLogger("LoremCross.cash_control")
+
+        logger.error(msg)
+
+        if args:
+            logger.error("args: {}".format(args))
+
+        if kwargs:
+            logger.error("kwargs: {}".format(kwargs))
+
+    @staticmethod
+    def log_critical(msg, *args, **kwargs):
+        logger = logging.getLogger("LoremCross.cash_control")
+
+        logger.critical(msg)
+
+        if args:
+            logger.critical("args: {}".format(args))
+
+        if kwargs:
+            logger.critical("kwargs: {}".format(kwargs))
