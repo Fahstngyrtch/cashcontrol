@@ -4,7 +4,7 @@
     Интерфейсы печати на ККТ для устройств семейства Штрих: ФРК, ФРФ, М
 """
 from shtrih_constants import MAX_TRIES, PRN_CRITICAL, ERR_COMMAND_TIMEOUT, \
-    TIME_DELTA_ERRORS, TIME_DELTA_STEP, WAITING_ERRORS, ROLLBACKS
+    TIME_DELTA_ERRORS, TIME_DELTA_STEP, WAITING_ERRORS, ROLLBACKS, PRN_POST_CRITICAL
 from shtrih_exceptions import ShtrihConnectionError, ShtrihError, \
     ShtrihCommandError
 from shtrih import Shtrih
@@ -55,7 +55,7 @@ class ShtrihCashRegister(object):
     @staticmethod
     def prepare_response(**kwargs):
         """ Подготовка контейнера для ответа """
-        resp = dict(action='continue', exception=None, is_critical=False,
+        resp = dict(action='continue', exception=None, is_critical=False, post_critical=False,
                     data={}, delta=0, delta_for_last_command=0)
         resp.update(**kwargs)
         return resp
@@ -129,6 +129,7 @@ class ShtrihCashRegister(object):
                 'command': текущая команда,
                 'exception': объект ошибки,
                 'is_critical': признак нахождения в критической секции,
+                'post_critical': признак прохождения критической секции
                 'data': словарь с данными ответа,
                 'delta': приращение ко времени выполнения команды,
                 'delta_for_last_command': приращение ко времени выполнения
@@ -171,6 +172,7 @@ class ShtrihCashRegister(object):
                 'command': текущая команда,
                 'exception': объект ошибки,
                 'is_critical': признак нахождения в критической секции,
+                'post_critical': признак прохождения критической секции
                 'data': словарь с данными ответа,
                 'delta': приращение ко времени выполнения команды,
                 'delta_for_last_command': приращение ко времени выполнения
@@ -179,6 +181,7 @@ class ShtrihCashRegister(object):
         """
         response = self.prepare_response(command=command, exception=exception)
         response['is_critical'] = self.__device.print_zone == PRN_CRITICAL
+        response['post_critical'] = self.__device.print_zone == PRN_POST_CRITICAL
 
         if exception:
             response['action'] = 'break'
